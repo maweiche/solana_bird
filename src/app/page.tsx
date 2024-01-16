@@ -2,14 +2,14 @@
 import React, { useState, useEffect } from "react";
 import Bird from "./../../components/Bird";
 import Pipes from "./../../components/Pipes";
-import { GameOverText } from "../../components/GameoverText";
+import { GameOverText } from "../../components/GameOverText";
 
 const App = () => {
   const [birdPosition, setBirdPosition] = useState({ x: 50, y: 200 });
   const [pipes, setPipes] = useState<any[]>([]);
-  const [gameOver, setGameOver] = useState(false);
-  const [score, setScore] = useState(0);
-  const [gameStarted, setGameStarted] = useState(false);
+  const [gameOver, setGameOver] = useState<boolean>(false);
+  const [score, setScore] = useState<number>(0);
+  const [gameStarted, setGameStarted] = useState<boolean>(false);
 
   const jump = () => {
     if (!gameOver && gameStarted) {
@@ -78,6 +78,19 @@ const App = () => {
   }, []);
 
   useEffect(() => {
+    // Spacebar to jump
+    const handleKeyDown = (e: any) => {
+      if (
+        e.key == " " ||
+        e.code == "Space" ||      
+        e.keyCode == 32      
+      ) {
+        jump();
+        console.log('jump')
+      }
+    };
+    window.addEventListener("keydown", handleKeyDown);
+
     const gravity = setInterval(() => {
       setBirdPosition((prev) => ({ ...prev, y: prev.y + 5 }));
       checkCollision();
@@ -87,7 +100,11 @@ const App = () => {
       if (!gameOver && gameStarted) {
         setPipes((prev) => [
           ...prev,
-          { x: 800, y: Math.floor(Math.random() * 300) - 400 },
+          { 
+            x: 800,
+            // heighth is a random number between 200 and 400px
+            y: Math.floor(Math.random() * 200) + 200
+          },
         ]);
       }
     }, 2000);
@@ -102,6 +119,7 @@ const App = () => {
       clearInterval(gravity);
       clearInterval(pipeGenerator);
       clearInterval(pipeMove);
+      window.removeEventListener("keydown", handleKeyDown);
     };
   }, [gameOver, gameStarted]);
 
