@@ -1,113 +1,119 @@
-import Image from 'next/image'
+'use client'
+import React, { useState, useEffect } from 'react';
+import Bird from './../../components/Bird';
+import Pipes from './../../components/Pipes';
 
-export default function Home() {
-  return (
-    <main className="flex min-h-screen flex-col items-center justify-between p-24">
-      <div className="z-10 max-w-5xl w-full items-center justify-between font-mono text-sm lg:flex">
-        <p className="fixed left-0 top-0 flex w-full justify-center border-b border-gray-300 bg-gradient-to-b from-zinc-200 pb-6 pt-8 backdrop-blur-2xl dark:border-neutral-800 dark:bg-zinc-800/30 dark:from-inherit lg:static lg:w-auto  lg:rounded-xl lg:border lg:bg-gray-200 lg:p-4 lg:dark:bg-zinc-800/30">
-          Get started by editing&nbsp;
-          <code className="font-mono font-bold">src/app/page.tsx</code>
-        </p>
-        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-          <a
-            className="pointer-events-none flex place-items-center gap-2 p-8 lg:pointer-events-auto lg:p-0"
-            href="https://vercel.com?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            By{' '}
-            <Image
-              src="/vercel.svg"
-              alt="Vercel Logo"
-              className="dark:invert"
-              width={100}
-              height={24}
-              priority
-            />
-          </a>
-        </div>
-      </div>
+const App = () => {
+	const [birdPosition, setBirdPosition] = useState({ x: 50, y: 200 });
+	const [pipes, setPipes] = useState<any[]>([]);
+	const [gameOver, setGameOver] = useState(false);
+	const [score, setScore] = useState(0);
+	const [gameStarted, setGameStarted] = useState(false);
 
-      <div className="relative flex place-items-center before:absolute before:h-[300px] before:w-[480px] before:-translate-x-1/2 before:rounded-full before:bg-gradient-radial before:from-white before:to-transparent before:blur-2xl before:content-[''] after:absolute after:-z-20 after:h-[180px] after:w-[240px] after:translate-x-1/3 after:bg-gradient-conic after:from-sky-200 after:via-blue-200 after:blur-2xl after:content-[''] before:dark:bg-gradient-to-br before:dark:from-transparent before:dark:to-blue-700 before:dark:opacity-10 after:dark:from-sky-900 after:dark:via-[#0141ff] after:dark:opacity-40 before:lg:h-[360px] z-[-1]">
-        <Image
-          className="relative dark:drop-shadow-[0_0_0.3rem_#ffffff70] dark:invert"
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
+	const jump = () => {
+		if (!gameOver && gameStarted) {
+			setBirdPosition((prev) => ({ ...prev, y: prev.y - 60 }));
+		} else if (!gameOver && !gameStarted) {
+			// Start the game on the first jump
+			setGameStarted(true);
+		} else {
+			// Restart the game
+			setBirdPosition({ x: 50, y: 200 });
+			setPipes([]);
+			setGameOver(false);
+			setGameStarted(true);
+		}
+	};
 
-      <div className="mb-32 grid text-center lg:max-w-5xl lg:w-full lg:mb-0 lg:grid-cols-4 lg:text-left">
-        <a
-          href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Docs{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Find in-depth information about Next.js features and API.
-          </p>
-        </a>
+	const checkCollision = () => {
+		const birdTop = birdPosition.y;
+		const birdBottom = birdPosition.y + 50;
+		const birdLeft = birdPosition.x;
+		const birdRight = birdPosition.x + 50;
 
-        <a
-          href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Learn{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Learn about Next.js in an interactive course with&nbsp;quizzes!
-          </p>
-        </a>
+		pipes.forEach((pipe) => {
+			const pipeTop = pipe.y;
+			const pipeBottom = pipe.y + 600;
+			const pipeLeft = pipe.x;
+			const pipeRight = pipe.x + 100;
 
-        <a
-          href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Templates{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Explore starter templates for Next.js.
-          </p>
-        </a>
+			const isColliding =
+				birdRight > pipeLeft &&
+				birdLeft < pipeRight &&
+				birdBottom > pipeTop &&
+				birdTop < pipeBottom;
 
-        <a
-          href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-          className="group rounded-lg border border-transparent px-5 py-4 transition-colors hover:border-gray-300 hover:bg-gray-100 hover:dark:border-neutral-700 hover:dark:bg-neutral-800/30"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          <h2 className={`mb-3 text-2xl font-semibold`}>
-            Deploy{' '}
-            <span className="inline-block transition-transform group-hover:translate-x-1 motion-reduce:transform-none">
-              -&gt;
-            </span>
-          </h2>
-          <p className={`m-0 max-w-[30ch] text-sm opacity-50`}>
-            Instantly deploy your Next.js site to a shareable URL with Vercel.
-          </p>
-        </a>
-      </div>
-    </main>
-  )
-}
+			if (isColliding) {
+				if (birdLeft > pipeLeft && birdRight < pipeRight && birdBottom < pipeBottom) {
+					// Bird has crashed through the pipe, increase score
+					setScore((prevScore) => prevScore + 1);
+				} else {
+					// Bird has hit the pipe, end the game
+					setGameOver(true);
+					setGameStarted(false);
+				}
+			}
+		});
+
+		// Check if bird is out of the screen vertically
+		if (birdBottom > 800 || birdTop < -170) {
+			// Bird is out of bounds, end the game
+			setGameOver(true);
+			setGameStarted(false);
+		}
+	};
+
+	useEffect(() => {
+		checkCollision();
+	}, [birdPosition, pipes, gameOver]);
+
+	useEffect(() => {
+		const gravity = setInterval(() => {
+			setBirdPosition((prev) => ({ ...prev, y: prev.y + 5 }));
+			checkCollision();
+		}, 30);
+
+		const pipeGenerator = setInterval(() => {
+			if (!gameOver && gameStarted) {
+				setPipes((prev) => [
+          ...prev,
+          { x: 800, y: Math.floor(Math.random() * 300) - 300 },
+        ]);
+      }
+		}, 2000);
+
+		const pipeMove = setInterval(() => {
+			if (!gameOver && gameStarted) {
+				setPipes((prev) =>
+					prev.map((pipe) => ({ ...pipe, x: pipe.x - 5 }))
+				);
+			}
+		}, 30);
+
+		return () => {
+			clearInterval(gravity);
+			clearInterval(pipeGenerator);
+			clearInterval(pipeMove);
+		};
+	}, [gameOver, gameStarted]);
+
+	return (
+		<div className={`App ${gameOver ? 'game-over' : ''}`} onClick={jump}>
+			<Bird birdPosition={birdPosition} />
+			{pipes.map((pipe, index) => (
+				<Pipes key={index} pipePosition={pipe} />
+			))}
+			{gameOver && (
+				<center>
+					<div className="game-over-message">
+						Game Over!
+						<br />
+						<p style={{ backgroundColor: 'blue', padding: "2px 6px", borderRadius: '5px' }}>Click anywhere to Restart</p>
+					</div>
+				</center>
+			)}
+		</div>
+	);
+};
+
+export default App;

@@ -1,27 +1,40 @@
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+/* src/App.css */
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
+.App {
+	position: relative;
+	width: 600px;
+	height: 600px;
+	border: 1px solid #000;
+	overflow: hidden;
+	background-color: #87ceeb;
+	/* Sky Blue */
+	transition: background-color 0.5s ease;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
-  }
+.game-over {
+	background-color: #ff6347;
+	/* Tomato */
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+.game-over-message {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	font-size: 24px;
+	font-weight: bold;
+	color: white;
+}
+
+.bird {
+	position: absolute;
+	width: 50px;
+	height: 50px;
+	user-select: none;
+}
+
+.pipe {
+	position: absolute;
+	width: 100px;
+	height: 600px;
 }
