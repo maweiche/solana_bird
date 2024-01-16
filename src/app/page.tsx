@@ -1,10 +1,34 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, FC, useMemo  } from "react";
 import Bird from "./../../components/Bird";
 import Pipes from "./../../components/Pipes";
 import { GameOverText } from "../../components/GameOverText";
 
+// Wallet adaptor imports
+import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
+import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
+import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets';
+import { WalletModalProvider, WalletDisconnectButton, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
+import { clusterApiUrl } from '@solana/web3.js';
+
+// Default styles that can be overridden by your app
+require('@solana/wallet-adapter-react-ui/styles.css');
+
 const App = () => {
+  // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
+  const network = WalletAdapterNetwork.Devnet;
+
+  // You can also provide a custom RPC endpoint.
+  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
+
+  const wallets = useMemo(
+    () => [
+          new PhantomWalletAdapter(),
+          new SolflareWalletAdapter()
+      ],
+      [network]
+  );
+
   const [birdPosition, setBirdPosition] = useState({ x: 50, y: 200 });
   const [pipes, setPipes] = useState<any[]>([]);
   const [gameOver, setGameOver] = useState<boolean>(false);
@@ -124,17 +148,33 @@ const App = () => {
   }, [gameOver, gameStarted]);
 
   return (
-    <div>
-      <h1 className="title">crypto bird</h1>
-      <p>score: {score}</p>
-      <div className={`App ${gameOver ? "game-over" : ""}`} onClick={jump}>
-        <Bird birdPosition={birdPosition} />
-        {pipes.map((pipe, index) => (
-          <Pipes key={index} pipePosition={pipe} />
-        ))}
-        {gameOver && <GameOverText />}
-      </div>
-    </div>
+    <ConnectionProvider endpoint={endpoint}>
+        <WalletProvider wallets={wallets} autoConnect>
+            <WalletModalProvider>
+                
+                { /* TODO: Move these buttons maybe on top of the page with a div/css */}
+                <WalletMultiButton />
+                <WalletDisconnectButton />
+
+                { /* Your app's components go here, nested within the context providers. */ }
+                <div>
+                  <h1 className="title">crypto bird</h1>
+                  <p>score: {score}</p>
+                  <div className={`App ${gameOver ? "game-over" : ""}`} onClick={jump}>
+                    <Bird birdPosition={birdPosition} />
+                    {pipes.map((pipe, index) => (
+                      <Pipes key={index} pipePosition={pipe} />
+                    ))}
+                    {gameOver && <GameOverText />}
+                  </div>
+                </div>
+
+            </WalletModalProvider>
+        </WalletProvider>
+    </ConnectionProvider>
+    
+    
+    
   );
 };
 
