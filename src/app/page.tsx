@@ -2,6 +2,7 @@
 import React, { useState, useEffect } from "react";
 import Bird from "./../../components/Bird";
 import Pipes from "./../../components/Pipes";
+import { GameOverText } from "../../components/GameoverText";
 
 const App = () => {
   const [birdPosition, setBirdPosition] = useState({ x: 50, y: 200 });
@@ -16,12 +17,14 @@ const App = () => {
     } else if (!gameOver && !gameStarted) {
       // Start the game on the first jump
       setGameStarted(true);
+      setScore(0);
     } else {
       // Restart the game
       setBirdPosition({ x: 50, y: 200 });
       setPipes([]);
       setGameOver(false);
       setGameStarted(true);
+      setScore(0);
     }
   };
 
@@ -44,18 +47,15 @@ const App = () => {
         birdTop < pipeBottom;
 
       if (isColliding) {
-        if (
-          birdLeft > pipeLeft &&
-          birdRight < pipeRight &&
-          birdBottom < pipeBottom
-        ) {
-          // Bird has crashed through the pipe, increase score
-          setScore((prevScore) => prevScore + 1);
-        } else {
-          // Bird has hit the pipe, end the game
-          setGameOver(true);
-          setGameStarted(false);
-        }
+        setGameOver(true);
+        setGameStarted(false);
+        return;
+      }
+
+      // Check if the bird has passed the pipe
+      if (!pipe.passed && birdRight > pipeRight) {
+        pipe.passed = true; // Mark the pipe as passed
+        setScore((prevScore) => prevScore + 1);
       }
     });
 
@@ -72,6 +72,12 @@ const App = () => {
   }, [birdPosition, pipes, gameOver]);
 
   useEffect(() => {
+    setPipes((prevPipes) =>
+      prevPipes.map((pipe) => ({ ...pipe, passed: false }))
+    );
+  }, []);
+
+  useEffect(() => {
     const gravity = setInterval(() => {
       setBirdPosition((prev) => ({ ...prev, y: prev.y + 5 }));
       checkCollision();
@@ -81,7 +87,7 @@ const App = () => {
       if (!gameOver && gameStarted) {
         setPipes((prev) => [
           ...prev,
-          { x: 800, y: Math.floor(Math.random() * 300) - 300 },
+          { x: 800, y: Math.floor(Math.random() * 300) - 400 },
         ]);
       }
     }, 2000);
@@ -100,28 +106,16 @@ const App = () => {
   }, [gameOver, gameStarted]);
 
   return (
-    <div className={`App ${gameOver ? "game-over" : ""}`} onClick={jump}>
-      <Bird birdPosition={birdPosition} />
-      {pipes.map((pipe, index) => (
-        <Pipes key={index} pipePosition={pipe} />
-      ))}
-      {gameOver && (
-        <center>
-          <div className="game-over-message">
-            Game Over!
-            <br />
-            <p
-              style={{
-                backgroundColor: "blue",
-                padding: "2px 6px",
-                borderRadius: "5px",
-              }}
-            >
-              Click anywhere to Restart
-            </p>
-          </div>
-        </center>
-      )}
+    <div>
+      <h1 className="title">crypto bird</h1>
+      <p>score: {score}</p>
+      <div className={`App ${gameOver ? "game-over" : ""}`} onClick={jump}>
+        <Bird birdPosition={birdPosition} />
+        {pipes.map((pipe, index) => (
+          <Pipes key={index} pipePosition={pipe} />
+        ))}
+        {gameOver && <GameOverText />}
+      </div>
     </div>
   );
 };
