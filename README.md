@@ -1,37 +1,72 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+# Solana Bird
+
+## About
+
+Solana Bird is a clone of Flappy Bird, but with an on-chain Scoreboard. After connecting your wallet you can select a NFT from your wallet to play with or just select the default bird. Once you crash, you can submit your score to the scoreboard. The scoreboard is on-chain and is sorted by the highest score. You can also view the top 20 scores on the scoreboard.
+
+[Scoreboard Repo](https://github.com/maweiche/scoreboard_program) 
+
+[Scoreboard Program Account](https://explorer.solana.com/address/5avBkwggqfVGFiuVf7jucTX2vzsCmMZ8ikxMgFknY1eJ?cluster=devnet)
+
+[Scoreboard Program IDL](https://explorer.solana.com/address/5avBkwggqfVGFiuVf7jucTX2vzsCmMZ8ikxMgFknY1eJ/anchor-program?cluster=devnet)
+
+### Program Details
+
+The scoreboard program has 3 main functions:
+- Initialize the scoreboard (this sets the signer has the authority and creates a PDA with the seeds `scoreboard` and `signer.key().as_ref()`)
+
+- Add Score (this adds a score to the scoreboard with three parameters: `player`, `score`, and `timestamp`)
+
+- Reset Scoreboard (this resets the scoreboard by clearing all the scores, only the authority can call this function)
+
+### Logo
+![Solana Bird](/public/solana_bird.png)
+
+### Gameplay
+![Gameplay](/public/gameplayScreenshot.png)
+
+### Scoreboard
+![Scoreboard](/public/scoreboardScreenshot.png)
+
+### NFT Selection
+![NFT Selection](/public/nftSelectionScreenshot.png)
+
 
 ## Getting Started
 
+After cloning the repo, you will need to update the `NEXT_PUBLIC_SOLANA_RPC_HOST` in the `.env.local` file to point to your devnet Solana RPC host then rename the file to `.env`.
+
 First, run the development server:
+
+```bash
+npm install
+# or
+yarn install
+```
+
+Then, run the development server:
 
 ```bash
 npm run dev
 # or
 yarn dev
-# or
-pnpm dev
-# or
-bun dev
 ```
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Packages Used
 
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+- [Anchor](https://github.com/coral-xyz/anchor) - Used to build on-chain scoreboard
 
-## Learn More
+- [Solana Web3.js](https://www.npmjs.com/package/@solana/web3.js) - Used for interacting with the Solana blockchain
 
-To learn more about Next.js, take a look at the following resources:
+- [Solana Wallet Adapter](https://github.com/solana-labs/wallet-adapter#readme) - Used for connecting to the wallet
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+- [@nfteyez/sol-rayz](https://github.com/NftEyez/sol-rayz#readme) - Used for the parsing of NFTs in the wallet
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js/) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/deployment) for more details.
-# solana_bird
+## Contributors
+- [CosmosMil - h0PHNz](https://github.com/CosmosMil)
+- [Send4t - QvjG6d](https://github.com/send4t)
+- [Judd1337 - qji1dU](judd1337)
+- [Noamrubin22 - niqkXC](https://github.com/noamrubin22)
+- [Maweiche - VR1t6E](https://github.com/maweiche)
