@@ -156,6 +156,8 @@ const App = () => {
       // Check if the bird has passed the pipe
       if (!pipe.passed && birdRight > pipeRight) {
         pipe.passed = true; // Mark the pipe as passed
+        const audio = new Audio('../../sounds/passedColumn.mp3');
+        audio.play().catch(e => console.error("Error playing sound:", e));
         setScore((prevScore) => prevScore + 1);
       }
     });
