@@ -12,6 +12,9 @@ import { useWallet } from '@solana/wallet-adapter-react';
 import { clusterApiUrl, Connection, PublicKey } from '@solana/web3.js';
 import AppBar from "./../../components/AppBar";
 
+// NFT Parser imports
+import SelectNft from "../../components/nftParser/selectNft";
+
 // Default styles that can be overridden by your app
 require('@solana/wallet-adapter-react-ui/styles.css');
 
@@ -29,7 +32,7 @@ const App = () => {
   const [score, setScore] = useState<number>(0);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [nftSelected, setNftSelected] = useState<boolean>(false);
   //scoreboard logic
   const [showScoreboard, setShowScoreboard] = useState<boolean>(false);
   
@@ -78,7 +81,17 @@ const App = () => {
 
   const jump = () => {
     if (!gameOver && gameStarted) {
-      setBirdPosition((prev) => ({ ...prev, y: prev.y - 60 }));
+      setBirdPosition((prev) => ({ ...prev, y: prev.y - 60, rotation: "rotate(-30deg)" }));
+      // as the bird jumps, it rotates up to 30 degrees then back to 0
+      setTimeout(() => {
+        setBirdPosition((prev) => ({ ...prev, rotation: "rotate(-15deg)" }));
+      }, 100);
+      setTimeout(() => {
+        setBirdPosition((prev) => ({ ...prev, rotation: "rotate(0deg)" }));
+      }, 150);
+      setTimeout(() => {
+        setBirdPosition((prev) => ({ ...prev, rotation: "rotate(15deg)" }));
+      }, 200);
     } else if (!gameOver && !gameStarted) {
       // Start the game on the first jump
       setGameStarted(true);
@@ -188,11 +201,25 @@ const App = () => {
     };
   }, [gameOver, gameStarted]);
 
+  useEffect(() => {
+    if(window !== undefined) {
+      setNftSelected(localStorage.getItem("nftSelected") ? true : false);
+    }
+  }, []);
+
   return (
     <div className="container">
       <AppBar />
-      {!showScoreboard && !loading &&(
+      {!publicKey && (
+        <div className="wallet-container">
+          <h1>Connect Wallet to Start</h1>
+        </div>
+      )}
+      
+      
+      {!showScoreboard && !loading && publicKey &&(
         <div className="game-container">
+          <SelectNft />
           <div className="button-container">
             <button onClick={() => setShowScoreboard(true)}>Show Scoreboard</button>
             {gameOver && score > 0 && (
