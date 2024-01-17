@@ -79,9 +79,9 @@ export default function SelectNft() {
         });
     }, [publicKey]);
     return (
-        <>
+        <div>
             {showNfts && (
-                <div style={{display: 'flex', flexDirection: 'column', gap: '20px', alignContent:'center', justifyContent: 'center', alignItems: 'center'}}>
+                <div style={{display: 'flex', flexDirection: 'column', gap: '2px', alignContent:'center', justifyContent: 'center', alignItems: 'center'}}>
                     <h2>Select NFT to Use</h2>
                     {loading && <p>Loading...</p>}
                     <div
@@ -104,22 +104,22 @@ export default function SelectNft() {
                     </div>
                     <button
                         onClick={() => selectDefault()}
-                        style={{ width: 'fit-content', height: 'fit-content', cursor: 'pointer', backgroundColor: 'blue', color: 'white', fontSize: '20px'}}
+                        className="primary-btn"
                     >
                         Just use default Bird
                     </button>
                 </div>
             )}
             {!showNfts && (
-                <div style={{display: 'flex', flexDirection: 'column', gap: '20px', alignContent:'center', justifyContent: 'center', alignItems: 'center'}}>
+                <div style={{display: 'flex', flexDirection: 'column', gap: '2px', alignContent:'center', justifyContent: 'center', alignItems: 'center'}}>
                     <button
                         onClick={() => setShowNfts(true)}
-                        style={{ width: 'fit-content', height: 'fit-content', cursor: 'pointer', backgroundColor: 'blue', color: 'white', fontSize: '20px'}}
+                        className="primary-btn"
                     >
                         Change NFT
                     </button>
                 </div>
             )}
-        </>
+        </div>
     )
 }

@@ -12,20 +12,21 @@ export default function AppBar() {
   return (
 
     <div
-      style={{
-        display: "flex",
-        justifyContent: "space-between",
-        alignItems: "center",
-        padding: "0 1rem",
-        height: "6rem",
-        borderBottom: "1px solid #eaeaea",
-        position: "fixed",
-        margin: "1rem",
-        top: 0,
-        left: 0,
-        right: 0,
-        zIndex: 100,
-      }}
+      // style={{
+      //   display: "flex",
+      //   justifyContent: "space-between",
+      //   alignItems: "center",
+      //   padding: "0 1rem",
+      //   height: "6rem",
+      //   borderBottom: "1px solid #eaeaea",
+      //   position: "fixed",
+      //   margin: "1rem",
+      //   top: 0,
+      //   left: 0,
+      //   right: 0,
+      //   zIndex: 100,
+      // }}
+      className="app-bar"
     >
       <a
         href="/"

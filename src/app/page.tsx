@@ -19,7 +19,6 @@ import {
 import { useWallet } from "@solana/wallet-adapter-react";
 import { clusterApiUrl, Connection, PublicKey } from "@solana/web3.js";
 import AppBar from "./../../components/AppBar";
-import Scoreboard from "../../components/scoreboardDisplay/scoreboard";
 
 // NFT Parser imports
 import SelectNft from "../../components/nftParser/selectNft";
@@ -235,22 +234,16 @@ const App = () => {
   return (
     <div className="container">
       <AppBar />
-
-      {!showScoreboard && !loading && (
-        <div className="game-container">
-          <h1 className="score-title">SCORE: {score}</h1>
-            
       {!publicKey && (
         <div className="wallet-container">
           <h1>Connect Wallet to Start</h1>
         </div>
       )}
-      
-      
+
       {!showScoreboard && !loading && publicKey &&(
         <div className="game-container">
           <SelectNft />
-
+          <h1 className="score-title">SCORE: {score}</h1>
           <div className="button-container">
             {gameOver && score > 0 && (
               <button onClick={addScore} className="primary-btn">

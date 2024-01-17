@@ -20,7 +20,7 @@ type Score = {
 export default function ScoreboardDisplay() {
   const { publicKey, sendTransaction } = useWallet();
   const [loading, setLoading] = useState<boolean>(false);
-
+  const [authority, setAuthority] = useState<PublicKey | null>(null);
   // Scoreboard Info
   const [scoreboardPda, setScoreboardPda] = useState<PublicKey | null>(null);
   const [displayInit, setDisplayInit] = useState<boolean>(false);
@@ -70,6 +70,7 @@ export default function ScoreboardDisplay() {
       console.log("game_data_decoded", game_data_decoded);
 
       setScoreboardData(game_data_decoded.scores);
+      setAuthority(game_data_decoded.authority);
     } else {
       setDisplayInit(true);
     }
@@ -173,9 +174,6 @@ export default function ScoreboardDisplay() {
       )}
 
       <div className="scoreboard">
-        {/* create a table to render the scoreboardData
-                    the table should have 3 columns: player, score, timestamp
-                */}
         <table>
           <thead>
             <tr>
@@ -207,10 +205,7 @@ export default function ScoreboardDisplay() {
         <div
           style={{ display: "flex", flexDirection: "row", marginTop: "1rem" }}
         >
-          <button onClick={addScore} className="secondary-btn">
-            Add Score
-          </button>
-          <button onClick={resetScoreboard} className="secondary-btn">
+          <button onClick={resetScoreboard} className="secondary-btn" disabled={authority?.toString() != publicKey?.toString() ? true : false}>
             Reset Scoreboard
           </button>
         </div>
