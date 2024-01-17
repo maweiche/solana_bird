@@ -11,6 +11,8 @@ import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adap
 import { WalletModalProvider, WalletDisconnectButton, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import { clusterApiUrl } from '@solana/web3.js';
 
+import AppBar from "./../../components/AppBar";
+
 // Default styles that can be overridden by your app
 require('@solana/wallet-adapter-react-ui/styles.css');
 
@@ -151,15 +153,9 @@ const App = () => {
     <ConnectionProvider endpoint={endpoint}>
         <WalletProvider wallets={wallets} autoConnect>
             <WalletModalProvider>
-                
-                { /* TODO: Move these buttons maybe on top of the page with a div/css */}
-                <WalletMultiButton />
-                <WalletDisconnectButton />
-
-                { /* Your app's components go here, nested within the context providers. */ }
-                <div>
-                  <h1 className="title">crypto bird</h1>
-                  <p>score: {score}</p>
+                <div className="container">
+                  <AppBar />
+                  <h1 className="title">score: {score}</h1>
                   <div className={`App ${gameOver ? "game-over" : ""}`} onClick={jump}>
                     <Bird birdPosition={birdPosition} />
                     {pipes.map((pipe, index) => (
@@ -168,13 +164,9 @@ const App = () => {
                     {gameOver && <GameOverText />}
                   </div>
                 </div>
-
             </WalletModalProvider>
         </WalletProvider>
     </ConnectionProvider>
-    
-    
-    
   );
 };
 
