@@ -4,17 +4,9 @@ export const GameOverText = () => {
   return (
     <center>
       <div className="game-over-message">
-        Game Over!
+        GAME OVER
         <br />
-        <p
-          style={{
-            backgroundColor: "blue",
-            padding: "2px 6px",
-            borderRadius: "5px",
-          }}
-        >
-          Click anywhere to Restart
-        </p>
+        <p>CLICK ANYWHERE TO RESTART</p>
       </div>
     </center>
   );
