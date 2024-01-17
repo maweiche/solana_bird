@@ -116,3 +116,14 @@ body {
   font-size: 3rem;
   text-align: center;
 }
+
+.scoreboard-container {
+  text-align: center;
+  display: flex-start;
+  flex-direction: column;
+}
+
+.scoreboard {
+  display: flex;
+  flex-direction: column;
+}

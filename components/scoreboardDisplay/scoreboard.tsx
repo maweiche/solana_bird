@@ -11,11 +11,20 @@ import { IDL, Scoreboard } from "../scoreboardProgram/idl/scoreboard";
 import BN from "bn.js";
 import * as anchor from "@project-serum/anchor";
 
+type Score = {
+    player: PublicKey,
+    score: Number,
+    timestamp: Number,
+}
+
 export default function Scoreboard() {
     const { publicKey, sendTransaction } = useWallet();
     const [loading, setLoading] = useState<boolean>(false);
+
+    // Scoreboard Info
     const [scoreboardPda, setScoreboardPda] = useState<PublicKey | null>(null);
     const [displayInit, setDisplayInit] = useState<boolean>(false);
+    const [scoreboardData, setScoreboardData] = useState<Score[] | null>(null);
 
     const connection = new Connection(clusterApiUrl("devnet"), {
         commitment: "confirmed",
@@ -36,9 +45,11 @@ export default function Scoreboard() {
     // Get the data from the program
     async function getScoreboardData() {
         setLoading(true);
-
+        // This is the publickey of the wallet that initialized the scoreboard
+        // To have a new scoreboard with your wallet as the authority, change to your wallet's public key
+        const deployer = new PublicKey("7wK3jPMYjpZHZAghjersW6hBNMgi9VAGr75AhYRqR2n");
         let data = PublicKey.findProgramAddressSync(
-          [Buffer.from("scoreboard")],
+          [Buffer.from("scoreboard"), deployer.toBuffer()],
           program.programId,
         );
         console.log("data", data);
@@ -47,12 +58,14 @@ export default function Scoreboard() {
         const scoreboard_account_info = await connection.getAccountInfo(data[0]);
     
         if (scoreboard_account_info != null) {
-          const game_data_decoded = program.coder.accounts.decode(
-            "Scoreboard",
-            scoreboard_account_info?.data,
-          );
+            const game_data_decoded = program.coder.accounts.decode(
+                "Scoreboard",
+                scoreboard_account_info?.data,
+            );
     
-          console.log("game_data_decoded", game_data_decoded);
+            console.log("game_data_decoded", game_data_decoded);
+
+            setScoreboardData(game_data_decoded.scores);
         } else {
             setDisplayInit(true);
         }
@@ -149,11 +162,39 @@ export default function Scoreboard() {
     }, []);
 
     return(
-        <div>
-            Scoreboard!
+        <div className="scoreboard-container">
+            <h2>Scoreboard</h2>
             {loading && <p>Loading...</p>}
             {displayInit && <button onClick={initializeScoreboard}>Initialize Scoreboard</button>}
-            <button onClick={addScore}>Add Score</button>
+            <div style={{ display: 'flex', flexDirection: 'row'}}>
+                <button onClick={addScore}>Add Score</button>
+                <button onClick={resetScoreboard}>Reset Scoreboard</button>
+            </div>
+            <div className="scoreboard">
+                {/* create a table to render the scoreboardData
+                    the table should have 3 columns: player, score, timestamp
+                */}
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Player</th>
+                            <th>Score</th>
+                            <th>Timestamp</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {scoreboardData && scoreboardData.map((score, index) => {
+                            return(
+                                <tr key={index}>
+                                    <td>{score.player.toString().slice(0, 4)}...{score.player.toString().slice(-4)}</td>
+                                    <td>{score.score.toString()}</td>
+                                    <td>{new Date(parseInt(score.timestamp.toString())).toLocaleString()}</td>
+                                </tr>
+                            )
+                        })}
+                    </tbody>
+                </table>
+            </div>
         </div>
     )
 }
