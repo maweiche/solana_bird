@@ -241,22 +241,27 @@ const App = () => {
       )}
 
       {!showScoreboard && !loading && publicKey &&(
-        <div className="game-container">
-          <SelectNft />
-          <h1 className="score-title">SCORE: {score}</h1>
-          <div className="button-container">
-            {gameOver && score > 0 && (
-              <button onClick={addScore} className="primary-btn">
-                ADD SCORE
-              </button>
-            )}
-            <button
-              onClick={() => setShowScoreboard(true)}
-              className="primary-btn"
-            >
-              SHOW SCOREBOARD
-            </button>
+        <div className="game-container row">
+          
+          <div className="column left">
+            <h1 className="score-title">SCORE: {score}</h1>
           </div>
+
+          <div className="column right">
+            <SelectNft />
+            
+            <div className="button-container">
+              {gameOver && score > 0 && (
+                <button onClick={addScore} className="primary-btn">
+                  ADD SCORE
+                </button>
+              )}
+              <button onClick={() => setShowScoreboard(true)} className="primary-btn">
+                SHOW SCOREBOARD
+              </button>
+            </div>
+          </div>
+
           <div className={`App ${gameOver ? "game-over" : ""}`} onClick={jump}>
             <Bird birdPosition={birdPosition} />
             {pipes.map((pipe, index) => (
