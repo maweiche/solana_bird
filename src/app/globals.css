@@ -25,10 +25,11 @@ body {
   align-content: center;
   width: 100vw;
   height: fit-content;
-  margin-bottom: 2rem;
+  margin-bottom: 0.5rem;
   border: solid 1px #eaeaea;
   padding: 0.5rem;
-  padding-top: 1rem;
+  padding-top: 0.5rem;
+  background: rgba(255, 255, 255, 0.5);
   border-bottom: "1px solid #eaeaea",
 }
 
@@ -100,9 +101,12 @@ body {
 
 .primary-btn {
   font-weight: bold;
-  padding: 1.5rem;
-  margin: 2rem;
-  border-radius: 2rem;
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+  padding-left: 2rem;
+  padding-right: 2rem;
+  margin: 1rem;
+  border-radius: 1rem;
   font-size: 1rem;
   border: 2px solid rgb(42, 12, 81);
   font-family: "Ubuntu Mono", monospace;
@@ -231,5 +235,10 @@ body {
   font-family: "Ubuntu Mono", monospace;
   font-size: 1.5rem;
   font-weight: 600;
+  padding-left: 1rem;
+}
+
+.wallet-connector {
+  padding-right: 1rem;
 }
 

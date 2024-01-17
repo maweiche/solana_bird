@@ -46,7 +46,11 @@ export default function AppBar() {
           alt="Solana Bird Logo"
         />
       </a>
-      <WalletMultiButton />
+      
+      <div className="wallet-connector">
+        <WalletMultiButton />
+      </div>
+      
     </div>
   );
 }
