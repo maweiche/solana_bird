@@ -21,6 +21,9 @@ import { clusterApiUrl, Connection, PublicKey } from "@solana/web3.js";
 import AppBar from "./../../components/AppBar";
 import Scoreboard from "../../components/scoreboardDisplay/scoreboard";
 
+// NFT Parser imports
+import SelectNft from "../../components/nftParser/selectNft";
+
 // Default styles that can be overridden by your app
 require("@solana/wallet-adapter-react-ui/styles.css");
 
@@ -38,11 +41,15 @@ const App = () => {
   const [score, setScore] = useState<number>(0);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
+  const [nftSelected, setNftSelected] = useState<boolean>(false);
+  const [playedGameOverSound, setPlayedGameOverSound] = useState(false);
 
   //scoreboard logic
   const [showScoreboard, setShowScoreboard] = useState<boolean>(false);
-
-  const addScore = async () => {
+  
+  const addScore = async() => {
+    const audio = new Audio('../../sounds/addedScore.mp3');
+      audio.play().catch(e => console.error("Error playing sound:", e));
     setLoading(true);
     setProvider(provider);
 
@@ -89,7 +96,19 @@ const App = () => {
 
   const jump = () => {
     if (!gameOver && gameStarted) {
-      setBirdPosition((prev) => ({ ...prev, y: prev.y - 60 }));
+      const audio = new Audio('../../sounds/wingFlap.mp3');
+      audio.play().catch(e => console.error("Error playing sound:", e));
+      setBirdPosition((prev) => ({ ...prev, y: prev.y - 60, rotation: "rotate(-30deg)" }));
+      // as the bird jumps, it rotates up to 30 degrees then back to 0
+      setTimeout(() => {
+        setBirdPosition((prev) => ({ ...prev, rotation: "rotate(-15deg)" }));
+      }, 100);
+      setTimeout(() => {
+        setBirdPosition((prev) => ({ ...prev, rotation: "rotate(0deg)" }));
+      }, 150);
+      setTimeout(() => {
+        setBirdPosition((prev) => ({ ...prev, rotation: "rotate(15deg)" }));
+      }, 200);
     } else if (!gameOver && !gameStarted) {
       // Start the game on the first jump
       setGameStarted(true);
@@ -101,6 +120,7 @@ const App = () => {
       setGameOver(false);
       setGameStarted(true);
       setScore(0);
+      setPlayedGameOverSound(false);
     }
   };
 
@@ -123,8 +143,14 @@ const App = () => {
         birdTop < pipeBottom;
 
       if (isColliding) {
+        if (!playedGameOverSound) {
+          const audio = new Audio('../../sounds/lost.mp3');
+          audio.play().catch(e => console.error("Error playing sound:", e));
+          setPlayedGameOverSound(true);
+        }
         setGameOver(true);
         setGameStarted(false);
+       
         return;
       }
 
@@ -138,6 +164,11 @@ const App = () => {
     // Check if bird is out of the screen vertically
     if (birdBottom > 800 || birdTop < -170) {
       // Bird is out of bounds, end the game
+      if (!playedGameOverSound) {
+        const audio = new Audio('../../sounds/lost.mp3');
+        audio.play().catch(e => console.error("Error playing sound:", e));
+        setPlayedGameOverSound(true);
+      }
       setGameOver(true);
       setGameStarted(false);
     }
@@ -195,12 +226,31 @@ const App = () => {
     };
   }, [gameOver, gameStarted]);
 
+  useEffect(() => {
+    if(window !== undefined) {
+      setNftSelected(localStorage.getItem("nftSelected") ? true : false);
+    }
+  }, []);
+
   return (
     <div className="container">
       <AppBar />
+
       {!showScoreboard && !loading && (
         <div className="game-container">
           <h1 className="score-title">SCORE: {score}</h1>
+            
+      {!publicKey && (
+        <div className="wallet-container">
+          <h1>Connect Wallet to Start</h1>
+        </div>
+      )}
+      
+      
+      {!showScoreboard && !loading && publicKey &&(
+        <div className="game-container">
+          <SelectNft />
+
           <div className="button-container">
             {gameOver && score > 0 && (
               <button onClick={addScore} className="primary-btn">

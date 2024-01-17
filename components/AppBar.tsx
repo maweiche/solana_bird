@@ -10,6 +10,7 @@ const WalletMultiButton = dynamic(
 
 export default function AppBar() {
   return (
+
     <div
       style={{
         display: "flex",
