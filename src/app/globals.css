@@ -29,6 +29,7 @@ body {
 
 .container {
   width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
   justify-content: space-evenly;
@@ -45,9 +46,10 @@ body {
 }
 
 .game-container {
+  width: 100%;
+  height: 100%;
   display: flex;
   flex-direction: column;
-  margin-top: 40px;
   align-items: center;
   width: 100%;
   background: linear-gradient(
@@ -60,50 +62,96 @@ body {
 }
 
 .button-container {
-  display: 'flex';
-  flex-direction: 'row';
-  margin-top: 20px;
+  display: "flex";
+  flex-direction: "row";
   justify-content: center;
-  gap: 20px;
+  /* gap: 20px; */
 }
 
-.button-container > button {
-  margin-top: 20px;
-  width: 100px;
-  height: 50px;
-  margin-left: 20px;
-  font-size: 16px;
+.game-container-elements {
+  display: flex;
+  width: 100vw;
+  flex-direction: column;
+  justify-content: space-around;
+  align-items: center;
+  align-content: center;
+  justify-items: center;
+}
+
+.game-container-elements-score {
+  margin: 1rem;
+  font-family: "Ubuntu Mono", monospace;
+  font-weight: lighter;
+}
+
+.scoreboard-btn {
+  /* font-size: 16px; */
   font-weight: bold;
-  border-radius: 5px;
+  padding: 2rem;
+  margin: 2rem;
+  border-radius: 2rem;
+  font-size: 2rem;
   border: none;
+  font-family: "Ubuntu Mono", monospace;
   background-color: #87ceeb;
   /* Sky Blue */
   transition: background-color 0.5s ease;
   cursor: pointer;
+  border: 2px solid rgb(42, 12, 81);
+}
+
+.primary-btn {
+  font-weight: bold;
+  padding: 1.5rem;
+  margin: 2rem;
+  border-radius: 2rem;
+  font-size: 1rem;
+  border: 2px solid rgb(42, 12, 81);
+  font-family: "Ubuntu Mono", monospace;
+  background-color: #87ceeb;
+  /* Sky Blue */
+  transition: background-color 0.5s ease;
+  cursor: pointer;
+}
+.secondary-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+}
+
+.secondary-btn {
+  font-size: 1rem;
+  font-weight: bold;
+  padding: 1rem;
+  margin: 1rem;
+  border-radius: 2rem;
+  border: none;
+  font-family: "Ubuntu Mono", monospace;
+  background-color: #87ceeb;
+  transition: background-color 0.5s ease;
+  cursor: pointer;
+  border: 2px solid rgb(42, 12, 81);
 }
 
 .scoreboard-container {
   display: flex;
   flex-direction: column;
-  margin-top: 20px;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+  width: 100%;
+  align-items: center;
+  font-family: "Ubuntu Mono", monospace;
+  background-color: #5c2175;
+}
+
+.scoreboard-container-display {
+  display: flex;
+  flex-direction: column;
   align-items: center;
 }
-
-.scoreboard-container > button {
-  margin-top: 20px;
-  width: 100px;
-  height: 50px;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 5px;
-  border: none;
-  background-color: #87ceeb;
-  /* Sky Blue */
-  transition: background-color 0.5s ease;
-  cursor: pointer;
-}
-
-
 
 .App {
   position: relative;
@@ -117,18 +165,23 @@ body {
 }
 
 .game-over {
-  background-color: #ff6347;
-  /* Tomato */
+  background-color: #5c2175;
 }
 
 .game-over-message {
   position: absolute;
-  top: 50%;
+  top: 25%;
   left: 50%;
+  padding: 6rem;
+  border: 3px solid rgb(42, 12, 81);
   transform: translate(-50%, -50%);
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: bold;
-  color: white;
+  color: rgb(214, 16, 204);
+  font-family: "Ubuntu Mono", monospace;
+  padding: 1rem;
+  background: rgb(74, 8, 161);
+  border-radius: 2rem;
 }
 
 .bird {
@@ -144,17 +197,22 @@ body {
   height: 600px;
 }
 
-.title {
-  font-family: "Changa", sans-serif;
-  font-weight: 200;
+.score-title {
+  /* font-family: "Changa", sans-serif; */
+  font-weight: 500;
   font-size: 3rem;
   text-align: center;
+  color: rgb(42, 12, 81);
 }
 
 .scoreboard-container {
   text-align: center;
   display: flex-start;
   flex-direction: column;
+  border: 1px solid black;
+  border-radius: 2rem;
+  padding: 2rem;
+  background: whitesmoke;
 }
 
 .scoreboard {
@@ -168,4 +226,12 @@ body {
   justify-content: center;
   align-items: center;
   align-content: center;
+  height: 100%;
 }
+
+.app-title {
+  font-family: "Ubuntu Mono", monospace;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+

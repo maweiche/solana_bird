@@ -1,22 +1,31 @@
 "use client";
-import React, { useState, useEffect, FC, useMemo  } from "react";
+import React, { useState, useEffect, FC, useMemo } from "react";
 import Bird from "./../../components/Bird";
 import Pipes from "./../../components/Pipes";
 import { GameOverText } from "../../components/GameOverText";
 import ScoreboardDisplay from "../../components/scoreboardDisplay/scoreboard";
 // Program imports
 import BN from "bn.js";
-import { Program, AnchorProvider,Idl, setProvider } from "@project-serum/anchor";
-import { IDL, Scoreboard } from "../../components/scoreboardProgram/idl/scoreboard";
-import { useWallet } from '@solana/wallet-adapter-react';
-import { clusterApiUrl, Connection, PublicKey } from '@solana/web3.js';
+import {
+  Program,
+  AnchorProvider,
+  Idl,
+  setProvider,
+} from "@project-serum/anchor";
+import {
+  IDL,
+  Scoreboard,
+} from "../../components/scoreboardProgram/idl/scoreboard";
+import { useWallet } from "@solana/wallet-adapter-react";
+import { clusterApiUrl, Connection, PublicKey } from "@solana/web3.js";
 import AppBar from "./../../components/AppBar";
+import Scoreboard from "../../components/scoreboardDisplay/scoreboard";
 
 // NFT Parser imports
 import SelectNft from "../../components/nftParser/selectNft";
 
 // Default styles that can be overridden by your app
-require('@solana/wallet-adapter-react-ui/styles.css');
+require("@solana/wallet-adapter-react-ui/styles.css");
 
 const App = () => {
   const { publicKey, sendTransaction } = useWallet();
@@ -44,44 +53,46 @@ const App = () => {
     setLoading(true);
     setProvider(provider);
 
-    const programId = new PublicKey("5avBkwggqfVGFiuVf7jucTX2vzsCmMZ8ikxMgFknY1eJ");
+    const programId = new PublicKey(
+      "5avBkwggqfVGFiuVf7jucTX2vzsCmMZ8ikxMgFknY1eJ"
+    );
     const program = new Program(
       IDL as Idl,
-      programId,
+      programId
     ) as unknown as Program<Scoreboard>;
 
-    const deployer = new PublicKey("7wK3jPMYjpZHZAghjersW6hBNMgi9VAGr75AhYRqR2n");
+    const deployer = new PublicKey(
+      "7wK3jPMYjpZHZAghjersW6hBNMgi9VAGr75AhYRqR2n"
+    );
     let data = PublicKey.findProgramAddressSync(
       [Buffer.from("scoreboard"), deployer.toBuffer()],
-      program.programId,
+      program.programId
     );
     const scoreboardPda = data[0];
     const score_as_bn = new BN(score);
     const timestamp = new BN(Date.now());
     const tx = await program.methods
-    .addScore(
-        score_as_bn,
-        timestamp,
-    )
-    .accounts({
+      .addScore(score_as_bn, timestamp)
+      .accounts({
         scoreboard: scoreboardPda!,
-    })
-    .transaction();
+      })
+      .transaction();
 
     const txHash = await sendTransaction(tx, connection);
 
-    const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+    const { blockhash, lastValidBlockHeight } =
+      await connection.getLatestBlockhash();
 
     await connection.confirmTransaction({
-        blockhash,
-        lastValidBlockHeight,
-        signature: txHash,
+      blockhash,
+      lastValidBlockHeight,
+      signature: txHash,
     });
 
     console.log("tx", tx);
 
     setLoading(false);
-}
+  };
 
   const jump = () => {
     if (!gameOver && gameStarted) {
@@ -176,13 +187,9 @@ const App = () => {
   useEffect(() => {
     // Spacebar to jump
     const handleKeyDown = (e: any) => {
-      if (
-        e.key == " " ||
-        e.code == "Space" ||      
-        e.keyCode == 32      
-      ) {
+      if (e.key == " " || e.code == "Space" || e.keyCode == 32) {
         jump();
-        console.log('jump')
+        console.log("jump");
       }
     };
     window.addEventListener("keydown", handleKeyDown);
@@ -196,10 +203,10 @@ const App = () => {
       if (!gameOver && gameStarted) {
         setPipes((prev) => [
           ...prev,
-          { 
+          {
             x: 800,
             // heighth is a random number between 200 and 400px
-            y: Math.floor(Math.random() * 200) + 200
+            y: Math.floor(Math.random() * 200) + 200,
           },
         ]);
       }
@@ -228,6 +235,11 @@ const App = () => {
   return (
     <div className="container">
       <AppBar />
+
+      {!showScoreboard && !loading && (
+        <div className="game-container">
+          <h1 className="score-title">SCORE: {score}</h1>
+            
       {!publicKey && (
         <div className="wallet-container">
           <h1>Connect Wallet to Start</h1>
@@ -238,13 +250,20 @@ const App = () => {
       {!showScoreboard && !loading && publicKey &&(
         <div className="game-container">
           <SelectNft />
+
           <div className="button-container">
-            <button onClick={() => setShowScoreboard(true)}>Show Scoreboard</button>
             {gameOver && score > 0 && (
-              <button onClick={addScore}>Add Score</button>
+              <button onClick={addScore} className="primary-btn">
+                ADD SCORE
+              </button>
             )}
+            <button
+              onClick={() => setShowScoreboard(true)}
+              className="primary-btn"
+            >
+              SHOW SCOREBOARD
+            </button>
           </div>
-          <h1 className="title">score: {score}</h1>
           <div className={`App ${gameOver ? "game-over" : ""}`} onClick={jump}>
             <Bird birdPosition={birdPosition} />
             {pipes.map((pipe, index) => (
@@ -255,8 +274,13 @@ const App = () => {
         </div>
       )}
       {showScoreboard && !loading && (
-        <div className="scoreboard-container">
-          <button onClick={() => setShowScoreboard(false)}>Hide Scoreboard</button>
+        <div className="scoreboard-container-display">
+          <button
+            onClick={() => setShowScoreboard(false)}
+            className="primary-btn"
+          >
+            Hide Scoreboard
+          </button>
           <ScoreboardDisplay />
         </div>
       )}
