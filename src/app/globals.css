@@ -35,10 +35,19 @@ body {
   align-items: center;
 }
 
-.game-container > button {
+.button-container {
+  display: 'flex';
+  flex-direction: 'row';
+  margin-top: 20px;
+  justify-content: center;
+  gap: 20px;
+}
+
+.button-container > button {
   margin-top: 20px;
   width: 100px;
   height: 50px;
+  margin-left: 20px;
   font-size: 16px;
   font-weight: bold;
   border-radius: 5px;
@@ -70,6 +79,8 @@ body {
   transition: background-color 0.5s ease;
   cursor: pointer;
 }
+
+
 
 .App {
   position: relative;
@@ -126,4 +137,13 @@ body {
 .scoreboard {
   display: flex;
   flex-direction: column;
+}
+
+.loading-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: center;
+  height: 100%;
 }

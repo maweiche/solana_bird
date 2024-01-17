@@ -17,7 +17,7 @@ type Score = {
     timestamp: Number,
 }
 
-export default function Scoreboard() {
+export default function ScoreboardDisplay() {
     const { publicKey, sendTransaction } = useWallet();
     const [loading, setLoading] = useState<boolean>(false);
 
@@ -167,7 +167,6 @@ export default function Scoreboard() {
             {loading && <p>Loading...</p>}
             {displayInit && <button onClick={initializeScoreboard}>Initialize Scoreboard</button>}
             <div style={{ display: 'flex', flexDirection: 'row'}}>
-                <button onClick={addScore}>Add Score</button>
                 <button onClick={resetScoreboard}>Reset Scoreboard</button>
             </div>
             <div className="scoreboard">

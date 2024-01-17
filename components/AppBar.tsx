@@ -1,6 +1,12 @@
 import React from "react";
-import { WalletMultiButton } from '@solana/wallet-adapter-react-ui';
 import Image from "next/image";
+import dynamic from "next/dynamic";
+
+const WalletMultiButton = dynamic(
+    async () =>
+      (await import("@solana/wallet-adapter-react-ui")).WalletMultiButton,
+    { ssr: false }
+  );
 
 export default function AppBar() {
   return (

@@ -3,44 +3,78 @@ import React, { useState, useEffect, FC, useMemo  } from "react";
 import Bird from "./../../components/Bird";
 import Pipes from "./../../components/Pipes";
 import { GameOverText } from "../../components/GameOverText";
-import Scoreboard from "../../components/scoreboardDisplay/scoreboard";
-
-// Wallet adaptor imports
-import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
-import { WalletAdapterNetwork } from '@solana/wallet-adapter-base';
-import { PhantomWalletAdapter, SolflareWalletAdapter } from '@solana/wallet-adapter-wallets';
-import { WalletModalProvider, WalletDisconnectButton, WalletMultiButton } from '@solana/wallet-adapter-react-ui';
-import { clusterApiUrl } from '@solana/web3.js';
-
+import ScoreboardDisplay from "../../components/scoreboardDisplay/scoreboard";
+// Program imports
+import BN from "bn.js";
+import { Program, AnchorProvider,Idl, setProvider } from "@project-serum/anchor";
+import { IDL, Scoreboard } from "../../components/scoreboardProgram/idl/scoreboard";
+import { useWallet } from '@solana/wallet-adapter-react';
+import { clusterApiUrl, Connection, PublicKey } from '@solana/web3.js';
 import AppBar from "./../../components/AppBar";
 
 // Default styles that can be overridden by your app
 require('@solana/wallet-adapter-react-ui/styles.css');
 
 const App = () => {
-  // The network can be set to 'devnet', 'testnet', or 'mainnet-beta'.
-  const network = WalletAdapterNetwork.Devnet;
+  const { publicKey, sendTransaction } = useWallet();
+  const connection = new Connection(clusterApiUrl("devnet"), {
+    commitment: "confirmed",
+  });
+  // Create an Anchor provider
+  const provider = new AnchorProvider(connection, useWallet() as any, {});
 
-  // You can also provide a custom RPC endpoint.
-  const endpoint = useMemo(() => clusterApiUrl(network), [network]);
-
-  const wallets = useMemo(
-    () => [
-          new PhantomWalletAdapter(),
-          new SolflareWalletAdapter()
-      ],
-      [network]
-  );
-
-  // game logic
   const [birdPosition, setBirdPosition] = useState({ x: 50, y: 200 });
   const [pipes, setPipes] = useState<any[]>([]);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
+  const [loading, setLoading] = useState<boolean>(false);
 
   //scoreboard logic
   const [showScoreboard, setShowScoreboard] = useState<boolean>(false);
+  
+  const addScore = async() => {
+    setLoading(true);
+    setProvider(provider);
+
+    const programId = new PublicKey("5avBkwggqfVGFiuVf7jucTX2vzsCmMZ8ikxMgFknY1eJ");
+    const program = new Program(
+      IDL as Idl,
+      programId,
+    ) as unknown as Program<Scoreboard>;
+
+    const deployer = new PublicKey("7wK3jPMYjpZHZAghjersW6hBNMgi9VAGr75AhYRqR2n");
+    let data = PublicKey.findProgramAddressSync(
+      [Buffer.from("scoreboard"), deployer.toBuffer()],
+      program.programId,
+    );
+    const scoreboardPda = data[0];
+    const score_as_bn = new BN(score);
+    const timestamp = new BN(Date.now());
+    const tx = await program.methods
+    .addScore(
+        score_as_bn,
+        timestamp,
+    )
+    .accounts({
+        scoreboard: scoreboardPda!,
+    })
+    .transaction();
+
+    const txHash = await sendTransaction(tx, connection);
+
+    const { blockhash, lastValidBlockHeight } = await connection.getLatestBlockhash();
+
+    await connection.confirmTransaction({
+        blockhash,
+        lastValidBlockHeight,
+        signature: txHash,
+    });
+
+    console.log("tx", tx);
+
+    setLoading(false);
+}
 
   const jump = () => {
     if (!gameOver && gameStarted) {
@@ -155,34 +189,38 @@ const App = () => {
   }, [gameOver, gameStarted]);
 
   return (
-    <ConnectionProvider endpoint={endpoint}>
-        <WalletProvider wallets={wallets} autoConnect>
-            <WalletModalProvider>
-                <div className="container">
-                  <AppBar />
-                  {!showScoreboard && (
-                    <div className="game-container">
-                      <button onClick={() => setShowScoreboard(true)}>Show Scoreboard</button>
-                      <h1 className="title">score: {score}</h1>
-                      <div className={`App ${gameOver ? "game-over" : ""}`} onClick={jump}>
-                        <Bird birdPosition={birdPosition} />
-                        {pipes.map((pipe, index) => (
-                          <Pipes key={index} pipePosition={pipe} />
-                        ))}
-                        {gameOver && <GameOverText />}
-                      </div>
-                    </div>
-                  )}
-                  {showScoreboard && (
-                    <div className="scoreboard-container">
-                      <button onClick={() => setShowScoreboard(false)}>Hide Scoreboard</button>
-                      <Scoreboard />
-                    </div>
-                  )}
-                </div>
-            </WalletModalProvider>
-        </WalletProvider>
-    </ConnectionProvider>
+    <div className="container">
+      <AppBar />
+      {!showScoreboard && !loading &&(
+        <div className="game-container">
+          <div className="button-container">
+            <button onClick={() => setShowScoreboard(true)}>Show Scoreboard</button>
+            {gameOver && score > 0 && (
+              <button onClick={addScore}>Add Score</button>
+            )}
+          </div>
+          <h1 className="title">score: {score}</h1>
+          <div className={`App ${gameOver ? "game-over" : ""}`} onClick={jump}>
+            <Bird birdPosition={birdPosition} />
+            {pipes.map((pipe, index) => (
+              <Pipes key={index} pipePosition={pipe} />
+            ))}
+            {gameOver && <GameOverText />}
+          </div>
+        </div>
+      )}
+      {showScoreboard && !loading && (
+        <div className="scoreboard-container">
+          <button onClick={() => setShowScoreboard(false)}>Hide Scoreboard</button>
+          <ScoreboardDisplay />
+        </div>
+      )}
+      {loading && (
+        <div className="loading-container">
+          <h1>Loading...</h1>
+        </div>
+      )}
+    </div>
   );
 };
 
