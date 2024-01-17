@@ -33,10 +33,14 @@ const App = () => {
   const [gameStarted, setGameStarted] = useState<boolean>(false);
   const [loading, setLoading] = useState<boolean>(false);
   const [nftSelected, setNftSelected] = useState<boolean>(false);
+  const [playedGameOverSound, setPlayedGameOverSound] = useState(false);
+
   //scoreboard logic
   const [showScoreboard, setShowScoreboard] = useState<boolean>(false);
   
   const addScore = async() => {
+    const audio = new Audio('../../sounds/addedScore.mp3');
+    audio.play().catch(e => console.error("Error playing sound:", e));
     setLoading(true);
     setProvider(provider);
 
@@ -81,6 +85,8 @@ const App = () => {
 
   const jump = () => {
     if (!gameOver && gameStarted) {
+      const audio = new Audio('../../sounds/wingFlap.mp3');
+      audio.play().catch(e => console.error("Error playing sound:", e));
       setBirdPosition((prev) => ({ ...prev, y: prev.y - 60, rotation: "rotate(-30deg)" }));
       // as the bird jumps, it rotates up to 30 degrees then back to 0
       setTimeout(() => {
@@ -103,6 +109,7 @@ const App = () => {
       setGameOver(false);
       setGameStarted(true);
       setScore(0);
+      setPlayedGameOverSound(false);
     }
   };
 
@@ -125,8 +132,11 @@ const App = () => {
         birdTop < pipeBottom;
 
       if (isColliding) {
+        const audio = new Audio('../../sounds/lost.mp3');
+          audio.play().catch(e => console.error("Error playing sound:", e));
         setGameOver(true);
         setGameStarted(false);
+        setPlayedGameOverSound(true);
         return;
       }
 
