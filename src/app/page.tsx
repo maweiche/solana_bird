@@ -40,7 +40,7 @@ const App = () => {
   
   const addScore = async() => {
     const audio = new Audio('../../sounds/addedScore.mp3');
-    audio.play().catch(e => console.error("Error playing sound:", e));
+      audio.play().catch(e => console.error("Error playing sound:", e));
     setLoading(true);
     setProvider(provider);
 
@@ -132,11 +132,14 @@ const App = () => {
         birdTop < pipeBottom;
 
       if (isColliding) {
-        const audio = new Audio('../../sounds/lost.mp3');
+        if (!playedGameOverSound) {
+          const audio = new Audio('../../sounds/lost.mp3');
           audio.play().catch(e => console.error("Error playing sound:", e));
+          setPlayedGameOverSound(true);
+        }
         setGameOver(true);
         setGameStarted(false);
-        setPlayedGameOverSound(true);
+       
         return;
       }
 
@@ -150,6 +153,11 @@ const App = () => {
     // Check if bird is out of the screen vertically
     if (birdBottom > 800 || birdTop < -170) {
       // Bird is out of bounds, end the game
+      if (!playedGameOverSound) {
+        const audio = new Audio('../../sounds/lost.mp3');
+        audio.play().catch(e => console.error("Error playing sound:", e));
+        setPlayedGameOverSound(true);
+      }
       setGameOver(true);
       setGameStarted(false);
     }
