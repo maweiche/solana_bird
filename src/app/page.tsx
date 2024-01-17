@@ -3,6 +3,7 @@ import React, { useState, useEffect, FC, useMemo  } from "react";
 import Bird from "./../../components/Bird";
 import Pipes from "./../../components/Pipes";
 import { GameOverText } from "../../components/GameOverText";
+import Scoreboard from "../../components/scoreboardDisplay/scoreboard";
 
 // Wallet adaptor imports
 import { ConnectionProvider, WalletProvider } from '@solana/wallet-adapter-react';
@@ -31,11 +32,15 @@ const App = () => {
       [network]
   );
 
+  // game logic
   const [birdPosition, setBirdPosition] = useState({ x: 50, y: 200 });
   const [pipes, setPipes] = useState<any[]>([]);
   const [gameOver, setGameOver] = useState<boolean>(false);
   const [score, setScore] = useState<number>(0);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
+
+  //scoreboard logic
+  const [showScoreboard, setShowScoreboard] = useState<boolean>(false);
 
   const jump = () => {
     if (!gameOver && gameStarted) {
@@ -155,14 +160,25 @@ const App = () => {
             <WalletModalProvider>
                 <div className="container">
                   <AppBar />
-                  <h1 className="title">score: {score}</h1>
-                  <div className={`App ${gameOver ? "game-over" : ""}`} onClick={jump}>
-                    <Bird birdPosition={birdPosition} />
-                    {pipes.map((pipe, index) => (
-                      <Pipes key={index} pipePosition={pipe} />
-                    ))}
-                    {gameOver && <GameOverText />}
-                  </div>
+                  {!showScoreboard && (
+                    <div className="game-container">
+                      <button onClick={() => setShowScoreboard(true)}>Show Scoreboard</button>
+                      <h1 className="title">score: {score}</h1>
+                      <div className={`App ${gameOver ? "game-over" : ""}`} onClick={jump}>
+                        <Bird birdPosition={birdPosition} />
+                        {pipes.map((pipe, index) => (
+                          <Pipes key={index} pipePosition={pipe} />
+                        ))}
+                        {gameOver && <GameOverText />}
+                      </div>
+                    </div>
+                  )}
+                  {showScoreboard && (
+                    <div className="scoreboard-container">
+                      <button onClick={() => setShowScoreboard(false)}>Hide Scoreboard</button>
+                      <Scoreboard />
+                    </div>
+                  )}
                 </div>
             </WalletModalProvider>
         </WalletProvider>

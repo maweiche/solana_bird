@@ -28,6 +28,49 @@ body {
   align-content: center;
 }
 
+.game-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 40px;
+  align-items: center;
+}
+
+.game-container > button {
+  margin-top: 20px;
+  width: 100px;
+  height: 50px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  border: none;
+  background-color: #87ceeb;
+  /* Sky Blue */
+  transition: background-color 0.5s ease;
+  cursor: pointer;
+}
+
+.scoreboard-container {
+  display: flex;
+  flex-direction: column;
+  margin-top: 20px;
+  height: 100%;
+  align-items: center;
+}
+
+.scoreboard-container > button {
+  margin-top: 20px;
+  width: 100px;
+  height: 50px;
+  font-size: 16px;
+  font-weight: bold;
+  border-radius: 5px;
+  border: none;
+  background-color: #87ceeb;
+  /* Sky Blue */
+  transition: background-color 0.5s ease;
+  cursor: pointer;
+}
+
 .App {
   position: relative;
   width: 100vw;
